@@ -1,0 +1,58 @@
+# 这个工作流的名字，您可以自定义
+workflows:
+    ios-build-workflow:
+      name: iOS Build Workflow
+      # 设置最大构建时间为60分钟，以防 pod repo update 时间过长
+      max_build_duration: 60
+      # 指定使用 Mac mini M2 构建机，和您之前的一样
+      instance_type: mac_mini_m2
+      # 指定构建环境中的 Xcode 和 CocoaPods 版本，确保稳定性
+      environment:
+        xcode: latest
+        cocoapods: default
+  
+      # 缓存设置，加速后续构建
+      cache:
+        cache_paths:
+          - $HOME/Library/Caches/CocoaPods
+          - $FLUTTER_ROOT/.pub-cache
+  
+      # 脚本部分：这里是构建的核心步骤
+      scripts:
+        - name: Set up local properties
+          script: |
+            # 这是一个好习惯，确保 Flutter 路径正确
+            echo "FLUTTER_ROOT=$FLUTTER_ROOT" > "$CM_BUILD_DIR/local.properties"
+  
+        - name: Clean project and update dependencies
+          script: |
+            # 运行我们之前确认有效的清理和更新命令
+            set -e # 如果任何命令失败，则立即停止脚本
+            
+            echo "--- Running Pre-build Steps ---"
+  
+            # 1. 强制更新 CocoaPods 仓库，解决核心问题
+            echo "Updating CocoaPods specs repository..."
+            pod repo update
+            
+            # 2. 彻底清理 Flutter 项目
+            echo "Cleaning Flutter project..."
+            flutter clean
+            
+            # 3. 获取 Dart 依赖
+            echo "Getting pub dependencies..."
+            flutter pub get
+            
+            echo "--- Pre-build Steps Finished ---"
+            
+        - name: Build iOS App
+          script: |
+            # 运行 Flutter 构建命令
+            # --no-codesign 选项用于在没有苹果开发者证书的情况下进行构建测试
+            flutter build ios --release --no-codesign
+            
+      # 构建产物设置：告诉 Codemagic 构建成功后去哪里找 .ipa 文件
+      artifacts:
+        - build/ios/ipa/*.ipa
+        - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
+        - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
