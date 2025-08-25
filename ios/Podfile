@@ -1,4 +1,8 @@
+# Uncomment this line to define a global platform for your project
 platform :ios, '15.5'
+
+# CocoaPods analytics sends network requests to Google Analytics when running a command.
+# This can be disabled by setting the ClANG_ANALYSIS_DIASABLED environment variable to YES.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
 project 'Runner', {
@@ -22,7 +26,15 @@ end
 
 require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
 
-# This is the new block that fixes the error
+# 这就是我们之前缺失的关键代码块。
+# 它告诉 CocoaPods 去安装你 Flutter 项目里的所有插件。
+target 'Runner' do
+  use_frameworks!
+  use_modular_headers!
+
+  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+end
+
 post_install do |installer|
   flutter_post_install(installer)
 end
