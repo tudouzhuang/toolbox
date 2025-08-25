@@ -1,0 +1,35 @@
+workflows:
+  ios-build-workflow:
+    name: iOS Build Workflow
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      xcode: latest
+      cocoapods: default
+    cache:
+      cache_paths:
+        - $HOME/Library/Caches/CocoaPods
+        - $FLUTTER_ROOT/.pub-cache
+
+    scripts:
+      - name: Get Flutter packages
+        script: |
+          flutter pub get
+      
+      - name: Install CocoaPods dependencies
+        script: |
+          set -e # 确保命令失败时立即停止
+          echo "--- Installing CocoaPods dependencies with force update ---"
+          # 进入ios目录，然后运行 pod install --repo-update
+          # 这是解决 "Unable to find specification" 问题的最强力命令
+          cd ios
+          pod install --repo-update
+
+      - name: Build iOS App
+        script: |
+          flutter build ios --release --no-codesign
+          
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
