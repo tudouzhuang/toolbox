@@ -4,261 +4,135 @@ import 'package:url_launcher/url_launcher.dart';
 class AboutPage extends StatelessWidget {
   const AboutPage({super.key});
 
+  // 辅助函数，用于安全地启动URL
+  Future<void> _launchUrl(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      // 可以在这里添加一个提示，比如SnackBar
+      print('Could not launch $url');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    // 获取当前主题的文本样式，方便复用
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('关于', style: Theme.of(context).textTheme.headlineMedium),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        // AppBar标题也使用项目名称
+        title: const Text('关于翎雀百宝箱'),
+        // 使用主题颜色，保持界面统一
+        backgroundColor: colorScheme.surfaceVariant,
       ),
-      body: Padding(
+      body: ListView(
         padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // 头像
-              CircleAvatar(
-                radius: 60,
-                backgroundImage: const AssetImage('assets/profile.png'),
-              ),
-              const SizedBox(height: 20),
-
-              Text(
-                '4evergr8',
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-              const SizedBox(height: 10),
-              // 开发者简介
-              Text(
-                '此软件来源于无聊时的瞎想',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-              const SizedBox(height: 20),
-
-              ListTile(
-                leading: const Icon(Icons.video_collection),
-                title: const Text('哔哩哔哩'),
-                subtitle: const Text('可以给UP投个币吗🪙'),
-                onTap: () {
-                  launchUrl(
-                    Uri.parse('https://space.bilibili.com/3546816836537000'),
-                    mode: LaunchMode.externalApplication,
-                  );
-                },
-              ),
-
-              ListTile(
-                leading: const Icon(Icons.code),
-                title: const Text('Github'),
-                subtitle: const Text('软件源代码'),
-                onTap: () {
-                  launchUrl(
-                    Uri.parse('https://github.com/4evergr8/atoolbox'),
-                    mode: LaunchMode.externalApplication,
-                  );
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.group),
-                title: const Text('软件交流群'),
-                subtitle: const Text('机器学习，我不学'),
-                onTap: () {
-                  launchUrl(
-                    Uri.parse('https://t.me/four_evergr_eight'),
-                    mode: LaunchMode.externalApplication,
-                  );
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.web),
-                title: const Text('GithubPages'),
-                subtitle: const Text('个人网页'),
-                onTap: () {
-                  launchUrl(
-                    Uri.parse('https://4evergr8.github.io'),
-                    mode: LaunchMode.externalApplication,
-                  );
-                },
-              ),
-              const SizedBox(height: 8), // 添加段落间距
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start, // 设置为左对齐
+        children: [
+          // --- Section 1: 关于项目 ---
+          Card(
+            elevation: 2,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center, // 确保圆点和文字对齐
-                    children: [
-                      Icon(Icons.circle_notifications, size: 15), // 更小的圆点
-                      const SizedBox(width: 8), // 圆点和文字之间的间距
-                      Expanded(
-                        child: Text(
-                          '源代码作者为KimiAI和ChatGPT，感谢二位开发者的付出。',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                      ),
-                    ],
+                  Text(
+                    '关于翎雀百宝箱',
+                    style: textTheme.headlineSmall?.copyWith(
+                      color: colorScheme.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  const SizedBox(height: 8), // 添加段落间距
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center, // 确保圆点和文字对齐
-                    children: [
-                      Icon(Icons.circle_notifications, size: 15), // 更小的圆点
-                      const SizedBox(width: 8), // 圆点和文字之间的间距
-                      Expanded(
-                        child: Text(
-                          '此软件使用IntelliJ IDEA作为编译器。',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8), // 添加段落间距
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center, // 确保圆点和文字对齐
-                    children: [
-                      Icon(Icons.circle_notifications, size: 15), // 更小的圆点
-                      const SizedBox(width: 8), // 圆点和文字之间的间距
-                      Expanded(
-                        child: Text(
-                          'Github Copilot插件彻底干亖了Cursor，不仅免费，还有三种模式可选。',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8), // 添加段落间距
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center, // 确保圆点和文字对齐
-                    children: [
-                      Icon(Icons.circle_notifications, size: 15), // 更小的圆点
-                      const SizedBox(width: 8), // 圆点和文字之间的间距
-                      Expanded(
-                        child: Text(
-                          '软件使用了Flutter框架和Dart语言。',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8), // 添加段落间距
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center, // 确保圆点和文字对齐
-                    children: [
-                      Icon(Icons.circle_notifications, size: 15), // 更小的圆点
-                      const SizedBox(width: 8), // 圆点和文字之间的间距
-                      Expanded(
-                        child: Text(
-                          '本地搜图功能借助了CloudflareWorker和R2存储桶。',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8), // 添加段落间距
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center, // 确保圆点和文字对齐
-                    children: [
-                      Icon(Icons.circle_notifications, size: 15), // 更小的圆点
-                      const SizedBox(width: 8), // 圆点和文字之间的间距
-                      Expanded(
-                        child: Text(
-                          '在线搜图功能灵感来源于搜图Bot酱。',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8), // 添加段落间距
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center, // 确保圆点和文字对齐
-                    children: [
-                      Icon(Icons.circle_notifications, size: 15), // 更小的圆点
-                      const SizedBox(width: 8), // 圆点和文字之间的间距
-                      Expanded(
-                        child: Text(
-                          'OCR功能来自google_mlkit_text_recognition。',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8), // 添加段落间距
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center, // 确保圆点和文字对齐
-                    children: [
-                      Icon(Icons.circle_notifications, size: 15), // 更小的圆点
-                      const SizedBox(width: 8), // 圆点和文字之间的间距
-                      Expanded(
-                        child: Text(
-                          '语言检测功能来自google_mlkit_language_id。',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8), // 添加段落间距
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center, // 确保圆点和文字对齐
-                    children: [
-                      Icon(Icons.circle_notifications, size: 15), // 更小的圆点
-                      const SizedBox(width: 8), // 圆点和文字之间的间距
-                      Expanded(
-                        child: Text(
-                          '离线翻译功能来自google_mlkit_translation。',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8), // 添加段落间距
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center, // 确保圆点和文字对齐
-                    children: [
-                      Icon(Icons.circle_notifications, size: 15), // 更小的圆点
-                      const SizedBox(width: 8), // 圆点和文字之间的间距
-                      Expanded(
-                        child: Text(
-                          '离线扫码功能来自google_mlkit_barcode_scanning。',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8), // 添加段落间距
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center, // 确保圆点和文字对齐
-                    children: [
-                      Icon(Icons.circle_notifications, size: 15), // 更小的圆点
-                      const SizedBox(width: 8), // 圆点和文字之间的间距
-                      Expanded(
-                        child: Text(
-                          '软件内图标来自GoogleMaterialIcons。',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8), // 添加段落间距
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center, // 确保圆点和文字对齐
-                    children: [
-                      Icon(Icons.circle_notifications, size: 15), // 更小的圆点
-                      const SizedBox(width: 8), // 圆点和文字之间的间距
-                      Expanded(
-                        child: Text(
-                          '软件图标和我的头像均使用GoogleEmojiKitchen制作。',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                      ),
-                    ],
+                  const SizedBox(height: 12),
+                  Text(
+                    '翎雀百宝箱是一款集成了多种实用工具的移动应用，旨在为用户提供便捷、高效的解决方案。我们致力于不断打磨产品，为您带来最好的体验。',
+                    style: textTheme.bodyLarge,
                   ),
                 ],
-              )
-
-            ],
+              ),
+            ),
           ),
-        ),
+          const SizedBox(height: 20),
+
+          // --- Section 2: 技术栈 ---
+          Card(
+            elevation: 2,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8), // 底部padding小一些以适应ListTile
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '技术实现',
+                    style: textTheme.headlineSmall?.copyWith(
+                      color: colorScheme.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    '翎雀百宝箱基于 Flutter 框架开发，部分工具依赖于优秀的第三方开源库。',
+                    style: textTheme.bodyLarge,
+                  ),
+                  const Divider(height: 20),
+                  ListTile(
+                    leading: Icon(Icons.description_outlined, color: colorScheme.secondary),
+                    title: const Text('查看依赖清单'),
+                    subtitle: const Text('完整的第三方开源库列表'),
+                    trailing: const Icon(Icons.open_in_new),
+                    onTap: () {
+                      // TODO: 请将下面的URL替换成你的依赖文件在GitHub上的实际地址
+                      _launchUrl('https://github.com/4evergr8/atoolbox/blob/main/pubspec.yaml');
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+
+          // --- Section 3: 问题反馈 ---
+          Card(
+            elevation: 2,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '问题反馈',
+                    style: textTheme.headlineSmall?.copyWith(
+                      color: colorScheme.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    '如果您在使用过程中遇到问题或发现某些功能未按预期运行，我们非常欢迎您提出宝贵的意见。',
+                    style: textTheme.bodyLarge,
+                  ),
+                  const Divider(height: 20),
+                  ListTile(
+                    leading: Icon(Icons.feedback_outlined, color: colorScheme.secondary),
+                    title: const Text('提交问题与建议'),
+                    subtitle: const Text('通过 GitHub Issues 页面反馈'),
+                    trailing: const Icon(Icons.open_in_new),
+                    onTap: () {
+                      // TODO: 请将下面的URL替换成你的GitHub仓库Issues页面的实际地址
+                      _launchUrl('https://github.com/4evergr8/atoolbox/issues');
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
